@@ -21,9 +21,9 @@ class App(QWidget):
         # create a text label
         self.textLabel = QLabel('FFT')
 
-        self.nfft_input = QTextEdit(text="1024")
-        self.fs_input = QTextEdit(text="30000")
-        self.fc_input = QTextEdit(text="470625000")
+        self.nfft_input = QTextEdit("1024")
+        self.fs_input = QTextEdit("30000")
+        self.fc_input = QTextEdit("470625000")
 
         # create a vertical box layout and add the two labels
         vbox = QVBoxLayout()
