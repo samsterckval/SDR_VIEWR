@@ -29,7 +29,9 @@ class App(QWidget):
         vbox = QVBoxLayout()
         vbox.addWidget(self.image_label)
         vbox.addWidget(self.textLabel)
-        vbox.addWidget()
+        vbox.addWidget(self.nfft_input)
+        vbox.addWidget(self.fs_input)
+        vbox.addWidget(self.fc_input)
 
         # set the vbox layout as the widgets layout
         self.setLayout(vbox)
