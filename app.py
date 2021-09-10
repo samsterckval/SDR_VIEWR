@@ -1,5 +1,5 @@
 from PyQt5 import QtGui
-from PyQt5.QtWidgets import QWidget, QLabel, QVBoxLayout, QTextEdit
+from PyQt5.QtWidgets import QWidget, QLabel, QVBoxLayout, QTextEdit, QLineEdit
 from PyQt5.QtGui import QPixmap
 import cv2
 from PyQt5.QtCore import pyqtSlot, Qt
@@ -21,9 +21,9 @@ class App(QWidget):
         # create a text label
         self.textLabel = QLabel('FFT')
 
-        self.nfft_input = QTextEdit("1024")
-        self.fs_input = QTextEdit("30000")
-        self.fc_input = QTextEdit("470625000")
+        self.nfft_input = QLineEdit("1024")
+        self.fs_input = QLineEdit("30000")
+        self.fc_input = QLineEdit("470625000")
 
         # create a vertical box layout and add the two labels
         vbox = QVBoxLayout()
@@ -53,9 +53,9 @@ class App(QWidget):
 
         fig, ax = plt.subplots(nrows=1, ncols=1, figsize=(10, 10), dpi=100)  # two axes on figure
         new_psd, new_freq = plt.psd(samples,
-                                    NFFT=int(self.nfft_input),
-                                    Fs=int(self.fs_input),
-                                    Fc=int(self.fc_input),
+                                    NFFT=int(self.nfft_input.text()),
+                                    Fs=int(self.fs_input.text()),
+                                    Fc=int(self.fc_input.text()),
                                     color="black")
 
         ax.axis("off")
