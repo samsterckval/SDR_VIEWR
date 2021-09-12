@@ -17,7 +17,7 @@ class App(QWidget):
         self.display_width = 500
         self.display_height = 500
 
-        self.sdr_settings = SdrSettings()
+        self.sdr_settings = SdrSettings(load_from_file=True, filename="settings.json")
 
         # create the label that holds the image
         self.image_label = QLabel(self)
@@ -39,12 +39,12 @@ class App(QWidget):
         self.centerfreq_label = QLabel('center freq')
         self.centerfreq_label.setFixedWidth(fixed_width_labels)
 
-        self.nfft_input = QLineEdit("1024")
-        self.gain_input = QLineEdit("4")
-        self.bandwidth_input = QLineEdit("30000")
-        self.read_input = QLineEdit("262144")
-        self.samplefreq_input = QLineEdit("2400000")
-        self.centerfreq_input = QLineEdit("470625000")
+        self.nfft_input = QLineEdit(str(self.sdr_settings.nfft))
+        self.gain_input = QLineEdit(str(self.sdr_settings.gain))
+        self.bandwidth_input = QLineEdit(str(self.sdr_settings.bandwidth))
+        self.read_input = QLineEdit(str(self.sdr_settings.DEFAULT_READ_SIZE))
+        self.samplefreq_input = QLineEdit(str(self.sdr_settings.sample_rate))
+        self.centerfreq_input = QLineEdit(str(self.sdr_settings.center_freq))
 
         nfft_layout = QHBoxLayout()
         nfft_layout.addWidget(self.nfft_label)
@@ -110,6 +110,8 @@ class App(QWidget):
         self.sdr_settings.center_freq = int(self.centerfreq_input.text())
         self.sdr_settings.nfft = int(self.nfft_input.text())
         self.sdr_settings.DEFAULT_READ_SIZE = int(self.read_input.text())
+
+        self.sdr_settings.save_to_file(create=True)
 
         self.thread.restart(self.sdr_settings)
 
