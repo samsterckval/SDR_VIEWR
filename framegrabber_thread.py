@@ -100,8 +100,8 @@ class VideoThread(QThread):
         #
         # Below should be a shorter, cleaner and cooler version of the above
         if ok:
-            for key, val in self.sdr_settings.__dict__.keys():
-                if key in sdr.__dict__.items():
+            for key, val in self.sdr_settings.__dict__.items():
+                if key in sdr.__dict__.keys():
                     setattr(sdr, key, val)
 
             while self._run_flag:
