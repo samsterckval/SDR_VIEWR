@@ -141,13 +141,13 @@ class App(QWidget):
 
         xlim = [self.sdr_settings.center_freq-self.sdr_settings.bandwidth//2, self.sdr_settings.center_freq+self.sdr_settings.bandwidth//2]
 
-        # print(xlim)
+        # print(f"psd : {new_psd.shape} -- freq : {new_freq.shape}")
 
         ax.set_xlim(xlim)
         # ax.set_ylim([0, 30])
         if self.sdr_settings.axes_off:
             ax.axis("off")
-        ax.plot(new_freq, new_psd, color="black")
+        ax.plot(new_psd, color="black")
         img = get_img_array(fig, img_shape=self.sdr_settings.img_size).copy()
 
         qt_img = self.convert_cv_qt(img)
