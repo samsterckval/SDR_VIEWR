@@ -1,9 +1,10 @@
 import io
 import numpy as np
 from matplotlib import figure
+from typing import Tuple
 
 
-def get_img_array(fig: figure, img_shape: tuple):
+def get_img_array(fig: figure, img_shape: Tuple[int, int]):
     buff = io.BytesIO()
     fig.savefig(buff, format='raw', facecolor='white', transparent=False)
     buff.seek(0)

@@ -34,8 +34,6 @@ class VideoThread(QThread):
         #
         # Below should be a shorter, cleaner and cooler version of the above
 
-
-
         if ok:
             sdr_props = [p for p in dir(RtlSdr) if isinstance(getattr(RtlSdr, p), property)]
             # print(sdr_props)

@@ -1,5 +1,6 @@
 import os
 import json
+from typing import Tuple
 
 
 class SdrSettings:
@@ -12,7 +13,8 @@ class SdrSettings:
                  DEFAULT_READ_SIZE: int = 256*1024,  # Yes I know PEP8 complains about this, but its an SDR setting
                  nfft: int = 1024,
                  load_from_file: bool = False,
-                 filename: str = None):
+                 filename: str = None,
+                 img_size: Tuple[int, int] = (1000, 1000)):
 
         self.load_from_file = load_from_file
         self.filename = filename
@@ -23,6 +25,7 @@ class SdrSettings:
         self.bandwidth = bandwidth
         self.DEFAULT_READ_SIZE = DEFAULT_READ_SIZE
         self.nfft = nfft
+        self.img_size = img_size
 
         if self.load_from_file:
             if self.filename is None:

@@ -15,14 +15,12 @@ class App(QWidget):
         super().__init__()
         self.setWindowTitle("~ Edgise Live SDR ~")
         self.setMinimumWidth(900)
-        self.display_width = 500
-        self.display_height = 500
 
-        self.sdr_settings = SdrSettings(load_from_file=True, filename="settings.json")
+        self.sdr_settings = SdrSettings(load_from_file=True, filename="settings.json", img_size=(500, 500))
 
         # create the label that holds the image
         self.image_label = QLabel(self)
-        self.image_label.resize(self.display_width, self.display_height)
+        self.image_label.resize(*self.sdr_settings.img_size)
 
         self.update_button = QPushButton('Update')
 
@@ -120,16 +118,25 @@ class App(QWidget):
     def update_image(self, samples):
         """Updates the image_label with a new opencv image"""
 
-        fig, ax = plt.subplots(nrows=1, ncols=1, figsize=(10, 10), dpi=100)  # two axes on figure
+        fig, ax = plt.subplots(nrows=1,
+                               ncols=1,
+                               figsize=(self.sdr_settings.img_size[0]//100, self.sdr_settings.img_size[1]//100),
+                               dpi=100)  # two axes on figure
         new_psd, new_freq = plt.psd(samples,
                                     NFFT=self.sdr_settings.nfft,
                                     Fs=self.sdr_settings.sample_rate,
                                     Fc=self.sdr_settings.center_freq,
                                     color="black")
 
-        ax.axis("off")
+        xlim = [self.sdr_settings.center_freq-self.sdr_settings.bandwidth//2, self.sdr_settings.center_freq+self.sdr_settings.bandwidth//2]
+
+        # print(xlim)
+
+        ax.set_xlim(xlim)
+        # ax.set_ylim([0, 30])
+        # ax.axis("off")
         ax.plot(new_freq, new_psd, color="black")
-        img = get_img_array(fig, img_shape=(1000, 1000)).copy()
+        img = get_img_array(fig, img_shape=self.sdr_settings.img_size).copy()
 
         qt_img = self.convert_cv_qt(img)
         self.image_label.setPixmap(qt_img)
@@ -141,5 +148,5 @@ class App(QWidget):
         h, w, ch = rgb_image.shape
         bytes_per_line = ch * w
         convert_to_Qt_format = QtGui.QImage(rgb_image.data, w, h, bytes_per_line, QtGui.QImage.Format_RGB888)
-        p = convert_to_Qt_format.scaled(self.display_width, self.display_height, Qt.KeepAspectRatio)
+        p = convert_to_Qt_format.scaled(*self.sdr_settings.img_size, Qt.KeepAspectRatio)
         return QPixmap.fromImage(p)
