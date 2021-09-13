@@ -42,11 +42,7 @@ class VideoThread(QThread):
         while self._run_flag:
 
             if ok:
-                while self._run_flag:
-                    samples = sdr.read_samples()
-
-                sdr.close()
-                del sdr
+                samples = sdr.read_samples()
             else:
                 x = np.linspace(-np.pi*self.sdr_settings.bandwidth//2,
                                 np.pi*self.sdr_settings.bandwidth//2,
@@ -59,6 +55,9 @@ class VideoThread(QThread):
 
             self.change_pixmap_signal.emit(samples)
 
+        if ok:
+            sdr.close()
+            del sdr
         print("Thread stopping")
 
     def stop(self):
