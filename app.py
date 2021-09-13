@@ -170,7 +170,7 @@ class App(QWidget):
         new_psd = new_psd - np.min(new_psd)
 
         # ax.set_xlim(xlim)
-        # ax.set_ylim([0, 30])
+        ax.set_ylim([0, 0.0015])
         if self.sdr_settings.axes_off:
             ax.axis("off")
         ax.plot(new_psd, color="black")
