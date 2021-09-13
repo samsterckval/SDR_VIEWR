@@ -8,18 +8,23 @@ from framegrabber_thread import VideoThread
 import matplotlib.pyplot as plt
 from utils import get_img_array, get_model, norm_image_and_predict
 from settings import SdrSettings
+from matplotlib.mlab import psd
 
 
 class App(QWidget):
     def __init__(self):
         super().__init__()
 
-        self.model = get_model("models/model_it1.h5")
-
         self.setWindowTitle("~ Edgise Live SDR ~")
         self.setMinimumWidth(900)
 
-        self.sdr_settings = SdrSettings(load_from_file=True, filename="settings.json", img_size=(1000, 1000), axes_off=False)
+        self.sdr_settings = SdrSettings(load_from_file=True, filename="settings.json", img_size=(1000, 1000),
+                                        axes_off=False, predict=False)
+
+        if self.sdr_settings.predict:
+            self.model = get_model("models/model_it1.h5")
+        else:
+            self.model = None
 
         # create the label that holds the image
         self.image_label = QLabel(self)
@@ -141,27 +146,39 @@ class App(QWidget):
 
         fig, ax = plt.subplots(nrows=1,
                                ncols=1,
-                               figsize=(self.sdr_settings.img_size[0]//100, self.sdr_settings.img_size[1]//100),
+                               figsize=(self.sdr_settings.img_size[0] // 100, self.sdr_settings.img_size[1] // 100),
                                dpi=100)  # two axes on figure
-        new_psd, new_freq = plt.psd(samples,
-                                    NFFT=self.sdr_settings.nfft,
-                                    Fs=self.sdr_settings.sample_rate,
-                                    Fc=self.sdr_settings.center_freq,
-                                    color="black")
+        new_psd, new_freq = psd(samples,
+                                NFFT=self.sdr_settings.nfft,
+                                Fs=self.sdr_settings.sample_rate)
 
-        xlim = [self.sdr_settings.center_freq-self.sdr_settings.bandwidth//2, self.sdr_settings.center_freq+self.sdr_settings.bandwidth//2]
+        new_freq += self.sdr_settings.center_freq
 
-        # print(f"psd : {new_psd.shape} -- freq : {new_freq.shape}")
+        # print(new_freq.shape)
 
-        ax.set_xlim(xlim)
+        new_psd = new_psd - np.min(new_psd)
+
+        xlim = [self.sdr_settings.center_freq - self.sdr_settings.bandwidth // 2,
+                self.sdr_settings.center_freq + self.sdr_settings.bandwidth // 2]
+
+        lower_index = np.argmax(new_freq > xlim[0])
+        upper_index = np.argmax(new_freq > xlim[1])
+
+        new_freq = new_freq[lower_index:upper_index]
+        new_psd = new_psd[lower_index:upper_index]
+
+        new_psd = new_psd - np.min(new_psd)
+
+        # ax.set_xlim(xlim)
         # ax.set_ylim([0, 30])
         if self.sdr_settings.axes_off:
             ax.axis("off")
         ax.plot(new_psd, color="black")
         img = get_img_array(fig, img_shape=self.sdr_settings.img_size).copy()
 
-        pred = norm_image_and_predict(img, self.model)
-        self.pred_bar.setValue(pred*100)
+        if self.sdr_settings.predict:
+            pred = norm_image_and_predict(img, self.model)
+            self.pred_bar.setValue(pred * 100)
 
         qt_img = self.convert_cv_qt(img)
         self.image_label.setPixmap(qt_img)

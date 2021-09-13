@@ -51,8 +51,6 @@ class VideoThread(QThread):
                 x = np.arange(self.sdr_settings.DEFAULT_READ_SIZE)
                 samples = np.sin(x*(self.sdr_settings.center_freq+np.random.randint(0, 10)))*self.sdr_settings.gain
 
-            # print(samples.shape)
-
             self.change_pixmap_signal.emit(samples)
 
             if time.time() < target:

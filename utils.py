@@ -36,6 +36,8 @@ def norm_image_and_predict(img: np.ndarray, model: tf.keras.Model):
 
     norm_img = img/255.
 
-    # print(norm_img.shape)
+    if len(norm_img.shape) != 4:
+        print(f"Something went wrong : shape of input = {norm_img.shape}")
+
     pred = model.predict(norm_img)[0][0]
     return pred
