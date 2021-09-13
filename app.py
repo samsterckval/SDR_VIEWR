@@ -1,5 +1,5 @@
 from PyQt5 import QtGui
-from PyQt5.QtWidgets import QWidget, QLabel, QVBoxLayout, QHBoxLayout, QLineEdit, QPushButton
+from PyQt5.QtWidgets import QWidget, QLabel, QVBoxLayout, QHBoxLayout, QLineEdit, QPushButton, QCheckBox
 from PyQt5.QtGui import QPixmap
 import cv2
 from PyQt5.QtCore import pyqtSlot, Qt
@@ -16,7 +16,7 @@ class App(QWidget):
         self.setWindowTitle("~ Edgise Live SDR ~")
         self.setMinimumWidth(900)
 
-        self.sdr_settings = SdrSettings(load_from_file=True, filename="settings.json", img_size=(500, 500))
+        self.sdr_settings = SdrSettings(load_from_file=True, filename="settings.json", img_size=(500, 500), axes_off=False)
 
         # create the label that holds the image
         self.image_label = QLabel(self)
@@ -37,6 +37,11 @@ class App(QWidget):
         self.samplefreq_label.setFixedWidth(fixed_width_labels)
         self.centerfreq_label = QLabel('center freq')
         self.centerfreq_label.setFixedWidth(fixed_width_labels)
+
+        self.axesoff_label = QLabel(" ")
+        self.axesoff_label.setFixedWidth(fixed_width_labels)
+        self.axesoff_checkbox = QCheckBox("Axes off")
+        self.axesoff_checkbox.setChecked(self.sdr_settings.axes_off)
 
         self.nfft_input = QLineEdit(str(self.sdr_settings.nfft))
         self.gain_input = QLineEdit(str(self.sdr_settings.gain))
@@ -69,6 +74,10 @@ class App(QWidget):
         center_layout.addWidget(self.centerfreq_label)
         center_layout.addWidget(self.centerfreq_input)
 
+        axesoff_layout = QHBoxLayout()
+        axesoff_layout.addWidget(self.axesoff_label)
+        axesoff_layout.addWidget(self.axesoff_checkbox)
+
         vbox_right = QVBoxLayout()
         vbox_right.addLayout(nfft_layout)
         vbox_right.addLayout(gain_layout)
@@ -76,6 +85,7 @@ class App(QWidget):
         vbox_right.addLayout(sample_layout)
         vbox_right.addLayout(center_layout)
         vbox_right.addLayout(read_layout)
+        vbox_right.addLayout(axesoff_layout)
         vbox_right.addWidget(self.update_button)
 
         # create a vertical box layout and add the two labels
@@ -109,6 +119,7 @@ class App(QWidget):
         self.sdr_settings.center_freq = int(self.centerfreq_input.text())
         self.sdr_settings.nfft = int(self.nfft_input.text())
         self.sdr_settings.DEFAULT_READ_SIZE = int(self.read_input.text())
+        self.sdr_settings.axes_off = bool(self.axesoff_checkbox.isChecked())
 
         self.sdr_settings.save_to_file(create=True)
 
@@ -134,7 +145,8 @@ class App(QWidget):
 
         ax.set_xlim(xlim)
         # ax.set_ylim([0, 30])
-        # ax.axis("off")
+        if self.sdr_settings.axes_off:
+            ax.axis("off")
         ax.plot(new_freq, new_psd, color="black")
         img = get_img_array(fig, img_shape=self.sdr_settings.img_size).copy()
 

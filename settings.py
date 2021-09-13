@@ -14,7 +14,8 @@ class SdrSettings:
                  nfft: int = 1024,
                  load_from_file: bool = False,
                  filename: str = None,
-                 img_size: Tuple[int, int] = (1000, 1000)):
+                 img_size: Tuple[int, int] = (1000, 1000),
+                 axes_off: bool = True):
 
         self.load_from_file = load_from_file
         self.filename = filename
@@ -26,6 +27,7 @@ class SdrSettings:
         self.DEFAULT_READ_SIZE = DEFAULT_READ_SIZE
         self.nfft = nfft
         self.img_size = img_size
+        self.axes_off = axes_off
 
         if self.load_from_file:
             if self.filename is None:
