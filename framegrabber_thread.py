@@ -1,10 +1,10 @@
 from PyQt5.QtCore import QThread, pyqtSignal
 import numpy as np
 from settings import SdrSettings
+import time
 try:
     from rtlsdr import RtlSdr
 except Exception as e:
-    import time
     print(f"rtlsdr not found : {e}")
 
 
