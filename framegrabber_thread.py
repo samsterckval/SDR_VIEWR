@@ -35,14 +35,16 @@ class VideoThread(QThread):
         # Below should be a shorter, cleaner and cooler version of the above
 
         if ok:
+            sdr_props = [p for p in dir(RtlSdr) if isinstance(getattr(RtlSdr, p), property)]
+            print(sdr_props)
             for key, val in self.sdr_settings.__dict__.items():
-                if key in sdr.__dict__.keys():
+                if key in sdr_props:
                     setattr(sdr, key, val)
 
         while self._run_flag:
 
             if ok:
-                samples = sdr.read_samples()
+                samples = sdr.read_samples(self.sdr_settings.DEFAULT_READ_SIZE)
             else:
                 x = np.linspace(-np.pi*self.sdr_settings.bandwidth//2,
                                 np.pi*self.sdr_settings.bandwidth//2,
