@@ -34,6 +34,8 @@ class VideoThread(QThread):
         #
         # Below should be a shorter, cleaner and cooler version of the above
 
+        target = time.time() + 0.033
+
         if ok:
             sdr_props = [p for p in dir(RtlSdr) if isinstance(getattr(RtlSdr, p), property)]
             # print(sdr_props)
@@ -51,9 +53,10 @@ class VideoThread(QThread):
                                 self.sdr_settings.DEFAULT_READ_SIZE)
                 samples = np.sin(x*(self.sdr_settings.center_freq+np.random.randint(0, 10, 1)))*self.sdr_settings.gain
 
-                time.sleep(0.1)
-
             # print(samples.shape)
+
+            if time.time() < target:
+                time.sleep(target-time.time())
 
             self.change_pixmap_signal.emit(samples)
 
