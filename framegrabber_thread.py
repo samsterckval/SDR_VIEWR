@@ -36,7 +36,7 @@ class VideoThread(QThread):
 
         if ok:
             sdr_props = [p for p in dir(RtlSdr) if isinstance(getattr(RtlSdr, p), property)]
-            print(sdr_props)
+            # print(sdr_props)
             for key, val in self.sdr_settings.__dict__.items():
                 if key in sdr_props:
                     setattr(sdr, key, val)
@@ -53,7 +53,7 @@ class VideoThread(QThread):
 
                 time.sleep(0.1)
 
-            print(samples.shape)
+            # print(samples.shape)
 
             self.change_pixmap_signal.emit(samples)
 
