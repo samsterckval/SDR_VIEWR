@@ -48,10 +48,8 @@ class VideoThread(QThread):
             if ok:
                 samples = sdr.read_samples(self.sdr_settings.DEFAULT_READ_SIZE)
             else:
-                x = np.linspace(-np.pi*self.sdr_settings.bandwidth//2,
-                                np.pi*self.sdr_settings.bandwidth//2,
-                                self.sdr_settings.DEFAULT_READ_SIZE)
-                samples = np.sin(x*(self.sdr_settings.center_freq+np.random.randint(0, 10, 1)))*self.sdr_settings.gain
+                x = np.arange(self.sdr_settings.DEFAULT_READ_SIZE)
+                samples = np.sin(x*(self.sdr_settings.center_freq+np.random.randint(0, 10)))*self.sdr_settings.gain
 
             # print(samples.shape)
 

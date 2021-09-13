@@ -61,12 +61,21 @@ class SdrSettings:
         print(f"Saved settings to file\n{self}")
 
     def __str__(self):
-        return f"SDR Settings :\n" \
-               f"--------------------\n" \
-               f"sample rate : {self.sample_rate}\n" \
-               f"center freq : {self.center_freq}\n" \
-               f"gain        : {self.gain}\n" \
-               f"bandwidth   : {self.bandwidth}\n" \
-               f"read size   : {self.DEFAULT_READ_SIZE}\n" \
-               f"nfft        : {self.nfft}\n"
+        lon_key: int = len(max(list(self.__dict__.keys()), key=len)) + 1
+        vals = []
+        for val in list(self.__dict__.values()):
+            vals.append(str(val))
+        lon_val: int = len(max(vals, key=len)) + 1
+        # lon_line = lon_key + lon_val + len(" : ") + 1
+
+        splitter = '+' + lon_key * '-' + '--+' + lon_val * '-' + '--+\n'
+
+        outstr = "SDR Settings :\n"
+        outstr += splitter
+
+        for key, val in self.__dict__.items():
+            outstr += f"| {key :>{lon_key}} | {str(val):<{lon_val}} |\n"
+            outstr += splitter
+
+        return outstr
 

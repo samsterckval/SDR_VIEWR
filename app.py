@@ -1,22 +1,25 @@
 from PyQt5 import QtGui
-from PyQt5.QtWidgets import QWidget, QLabel, QVBoxLayout, QHBoxLayout, QLineEdit, QPushButton, QCheckBox
+from PyQt5.QtWidgets import QWidget, QLabel, QVBoxLayout, QHBoxLayout, QLineEdit, QPushButton, QCheckBox, QProgressBar
 from PyQt5.QtGui import QPixmap
 import cv2
 from PyQt5.QtCore import pyqtSlot, Qt
 import numpy as np
 from framegrabber_thread import VideoThread
 import matplotlib.pyplot as plt
-from utils import get_img_array
+from utils import get_img_array, get_model, norm_image_and_predict
 from settings import SdrSettings
 
 
 class App(QWidget):
     def __init__(self):
         super().__init__()
+
+        self.model = get_model("models/model_it1.h5")
+
         self.setWindowTitle("~ Edgise Live SDR ~")
         self.setMinimumWidth(900)
 
-        self.sdr_settings = SdrSettings(load_from_file=True, filename="settings.json", img_size=(500, 500), axes_off=False)
+        self.sdr_settings = SdrSettings(load_from_file=True, filename="settings.json", img_size=(1000, 1000), axes_off=False)
 
         # create the label that holds the image
         self.image_label = QLabel(self)
@@ -37,6 +40,9 @@ class App(QWidget):
         self.samplefreq_label.setFixedWidth(fixed_width_labels)
         self.centerfreq_label = QLabel('center freq')
         self.centerfreq_label.setFixedWidth(fixed_width_labels)
+
+        self.pred_bar = QProgressBar()
+        self.pred_bar.setValue(50)
 
         self.axesoff_label = QLabel(" ")
         self.axesoff_label.setFixedWidth(fixed_width_labels)
@@ -88,9 +94,13 @@ class App(QWidget):
         vbox_right.addLayout(axesoff_layout)
         vbox_right.addWidget(self.update_button)
 
+        vbox_left = QVBoxLayout()
+        vbox_left.addWidget(self.image_label)
+        vbox_left.addWidget(self.pred_bar)
+
         # create a vertical box layout and add the two labels
         hbox = QHBoxLayout()
-        hbox.addWidget(self.image_label)
+        hbox.addLayout(vbox_left)
         hbox.addLayout(vbox_right)
 
         # set the vbox layout as the widgets layout
@@ -149,6 +159,9 @@ class App(QWidget):
             ax.axis("off")
         ax.plot(new_psd, color="black")
         img = get_img_array(fig, img_shape=self.sdr_settings.img_size).copy()
+
+        pred = norm_image_and_predict(img, self.model)
+        self.pred_bar.setValue(pred*100)
 
         qt_img = self.convert_cv_qt(img)
         self.image_label.setPixmap(qt_img)
