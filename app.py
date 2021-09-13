@@ -4,9 +4,10 @@ from PyQt5.QtGui import QPixmap
 import cv2
 from PyQt5.QtCore import pyqtSlot, Qt
 import numpy as np
-from framegrabber_thread import VideoThread, SdrSettings
+from framegrabber_thread import VideoThread
 import matplotlib.pyplot as plt
 from utils import get_img_array
+from settings import SdrSettings
 
 
 class App(QWidget):
