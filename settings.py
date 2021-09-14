@@ -68,7 +68,6 @@ class SdrSettings:
         for val in list(self.__dict__.values()):
             vals.append(str(val))
         lon_val: int = len(max(vals, key=len)) + 1
-        # lon_line = lon_key + lon_val + len(" : ") + 1
 
         splitter = '+' + lon_key * '-' + '--+' + lon_val * '-' + '--+\n'
 

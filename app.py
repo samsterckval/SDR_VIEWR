@@ -18,8 +18,11 @@ class App(QWidget):
         self.setWindowTitle("~ Edgise Live SDR ~")
         self.setMinimumWidth(900)
 
-        self.sdr_settings = SdrSettings(load_from_file=True, filename="settings.json", img_size=(1000, 1000),
-                                        axes_off=False, predict=False)
+        self.sdr_settings = SdrSettings(load_from_file=True,
+                                        filename="settings.json",
+                                        img_size=(1000, 1000),
+                                        axes_off=False,
+                                        predict=False)
 
         if self.sdr_settings.predict:
             self.model = get_model("models/model_it1.h5")
@@ -169,7 +172,6 @@ class App(QWidget):
 
         new_psd = new_psd - np.min(new_psd)
 
-        # ax.set_xlim(xlim)
         ax.set_ylim([0, 0.0004])
         if self.sdr_settings.axes_off:
             ax.axis("off")
@@ -178,6 +180,9 @@ class App(QWidget):
 
         if self.sdr_settings.predict:
             pred = norm_image_and_predict(img, self.model)
+            val = pred * 100
+            if val > 30:
+                self.pred_bar.set
             self.pred_bar.setValue(pred * 100)
 
         qt_img = self.convert_cv_qt(img)
