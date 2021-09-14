@@ -181,9 +181,7 @@ class App(QWidget):
         if self.sdr_settings.predict:
             pred = norm_image_and_predict(img, self.model)
             val = pred * 100
-            if val > 30:
-                self.pred_bar.set
-            self.pred_bar.setValue(pred * 100)
+            self.pred_bar.setValue(val)
 
         qt_img = self.convert_cv_qt(img)
         self.image_label.setPixmap(qt_img)
